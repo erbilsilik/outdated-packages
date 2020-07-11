@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, HttpModule } from '@nestjs/common';
 import { DatabaseModule } from '../infrasturcture/database/database.module';
 
 import { RepoSubscriptionsController } from './controllers/repo-subscriptions.controller';
@@ -6,7 +6,10 @@ import { repoSubscriptionProviders } from './providers/repo-subscription.provide
 import { RepoSubscriptionService } from './services/repo-subscription.service';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [
+    HttpModule,
+    DatabaseModule,
+  ],
   controllers: [RepoSubscriptionsController],
   providers: [RepoSubscriptionService, ...repoSubscriptionProviders],
 })
