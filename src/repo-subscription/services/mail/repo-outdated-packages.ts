@@ -5,15 +5,14 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class RepoOutDatedPackagesMailService {
   constructor(private readonly mailerService: MailerService) {}
   
-  public send(): void {
+  public send(to: Array<string>, { packageInfo: { repoUri }, outdatedPackages }): void {
     this
       .mailerService
       .sendMail({
-        to: 'test@nestjs.com', // list of receivers
-        from: 'noreply@nestjs.com', // sender address
-        subject: 'Testing Nest MailerModule ✔', // Subject line
-        text: 'welcome', // plaintext body
-        html: '<b>welcome</b>', // HTML body content
+        to,
+        from: 'outdated-packages@mail.com',
+        subject: `${new Date().toDateString()} - ${repoUri} outdated packages`,
+        html: JSON.stringify(outdatedPackages),
       })
       .then(() => { 
         console.log('Mail delivered successfully');

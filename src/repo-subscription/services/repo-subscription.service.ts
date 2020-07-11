@@ -1,41 +1,26 @@
 import { Inject, Injectable, HttpService } from '@nestjs/common';
-import { Queue } from 'bull';
-import { InjectQueue } from '@nestjs/bull';
 
-import { Model } from 'mongoose';
+// import { Model } from 'mongoose';
 
 import { RepoSubscription } from '../interfaces/repo-subscription.interface';
 import { RepoSubscriptionDto } from '../dto/repo-subscription.dto';
 import semver from './semver';
+import { MailEventEmitter } from '../events/app.events';
+import { InjectEventEmitter } from 'nest-emitter';
 
 @Injectable()
 export class RepoSubscriptionService {
 
     constructor(
-        @Inject('REPO_SUBSCRIPTION_MODEL') private readonly repoSubscriptionModel: Model<RepoSubscription>,
-        @InjectQueue('mail') private mailQueue: Queue,
+        // @Inject('REPO_SUBSCRIPTION_MODEL') private readonly repoSubscriptionModel: Model<RepoSubscription>,
         private httpService: HttpService,
+        @InjectEventEmitter() private readonly mailEmitter: MailEventEmitter,
     ) {}
 
     async create(repoSubscriptionDto: RepoSubscriptionDto): Promise<RepoSubscription> {
-        const createdRepoSubscription = new this.repoSubscriptionModel(repoSubscriptionDto);
+        // const createdRepoSubscription = new this.repoSubscriptionModel(repoSubscriptionDto);
+        this.mailEmitter.emit('mail', repoSubscriptionDto);
         // const repoSubscription = await createdRepoSubscription.save();
-        await this.mailQueue.add(
-            {
-              repoUri: 'https://api.github.com/repos/erbilsilik/todo-app-nest',
-              emails: ["erbil.silik@yandex.com", "silik.erbil@gmail.com"]
-            },
-            { 
-                // delay: 3000,
-                removeOnFail: false,
-                repeat: {
-                    startDate: new Date(),
-                    cron: '* * * * *', // every minute
-                },
-            }, // 3 seconds delayed
-        );
-        this.mailQueue.getJobCounts().then((res) => console.log(res));
-        this.mailQueue.getWorkers().then(res => console.log(res));
         return this.listOutdatedPackages(repoSubscriptionDto.url);
     }
 

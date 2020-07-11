@@ -16,12 +16,12 @@ export class MailProcessor {
     this.logger.debug('Start transcoding...');
     this.logger.debug(job.data);
     try {
-      const result = await this.repoSubscriptionService.listOutdatedPackages(job.data.repoUri);
-      this.repoOutDatedPackagesMailService.send();
-      this.logger.debug(result);
+      const outdatedPackages = await this.repoSubscriptionService.listOutdatedPackages(job.data.repoUri);
+      this.repoOutDatedPackagesMailService.send(job.data.emails, { packageInfo: job.data, outdatedPackages });
+      this.logger.debug(outdatedPackages);
     }
     catch(e) {
-      this.logger.debug(`Error: ${e}`);
+      this.logger.debug(`Error: ${e} from transcoding`);
     }
     this.logger.debug('Transcoding completed');
     return {};
