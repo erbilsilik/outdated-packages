@@ -1,4 +1,6 @@
 import { Inject, Injectable, HttpService } from '@nestjs/common';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 
 import { Model } from 'mongoose';
 
@@ -11,18 +13,35 @@ export class RepoSubscriptionService {
 
     constructor(
         @Inject('REPO_SUBSCRIPTION_MODEL') private readonly repoSubscriptionModel: Model<RepoSubscription>,
+        @InjectQueue('mail') private mailQueue: Queue,
         private httpService: HttpService,
     ) {}
 
     async create(repoSubscriptionDto: RepoSubscriptionDto): Promise<RepoSubscription> {
         const createdRepoSubscription = new this.repoSubscriptionModel(repoSubscriptionDto);
         // const repoSubscription = await createdRepoSubscription.save();
-        return this.listOutDatedPackages(repoSubscriptionDto.url);
+        await this.mailQueue.add(
+            {
+              repoUri: 'https://api.github.com/repos/erbilsilik/todo-app-nest',
+              emails: ["erbil.silik@yandex.com", "silik.erbil@gmail.com"]
+            },
+            { 
+                // delay: 3000,
+                removeOnFail: false,
+                repeat: {
+                    startDate: new Date(),
+                    cron: '* * * * *', // every minute
+                },
+            }, // 3 seconds delayed
+        );
+        this.mailQueue.getJobCounts().then((res) => console.log(res));
+        this.mailQueue.getWorkers().then(res => console.log(res));
+        return this.listOutdatedPackages(repoSubscriptionDto.url);
     }
 
     // list outdated packages use-case
-    async listOutDatedPackages(repoUri: string): Promise<any> {
-        const { data: repoInfo }= await this.httpService.get(repoUri + '/contents/package.json').toPromise();
+    async listOutdatedPackages(repoUri: string): Promise<any> {
+        const { data: repoInfo } = await this.httpService.get(repoUri + '/contents/package.json').toPromise();
         const { dependencies, devDependencies } = JSON.parse(this.decode(repoInfo.content));
         const dependencyList = this.getDependencyList(dependencies, devDependencies);
         const latestVersions = await Promise.all(

@@ -3,7 +3,7 @@ import { Provider } from '../schemas/repo-subscription.schemas';
 
 export class RepoSubscriptionDto {
     @IsEnum(Provider)
-    readonly status = Provider.GITHUB;
+    readonly provider = Provider.GITHUB;
     @IsString()
     readonly url: string;
     readonly emails: string;
