@@ -23,8 +23,7 @@ export class MailSenderService implements OnModuleInit {
           repoUri: repoSubscriptionDto.url,
           emails: repoSubscriptionDto.emails,
         },
-        { 
-            // delay: 3000,
+        {
             removeOnFail: false,
             // repeat: {
             //     startDate: new Date(),

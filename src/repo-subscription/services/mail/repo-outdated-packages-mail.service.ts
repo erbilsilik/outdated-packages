@@ -12,7 +12,10 @@ export class RepoOutDatedPackagesMailService {
         to,
         from: 'outdated-packages@mail.com',
         subject: `${new Date().toDateString()} - ${repoUri} outdated packages`,
-        html: JSON.stringify(outdatedPackages),
+        template: 'outdated-packages',
+        context: {
+          outdatedPackages
+        },
       })
       .then(() => { 
         console.log('Mail delivered successfully');

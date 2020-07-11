@@ -2,7 +2,7 @@ import { Processor, Process } from '@nestjs/bull';
 import { Logger } from '@nestjs/common'
 import { Job } from 'bull';
 import { RepoSubscriptionService } from '../services/repo-subscription.service';
-import { RepoOutDatedPackagesMailService } from '../services/mail/repo-outdated-packages';
+import { RepoOutDatedPackagesMailService } from '../services/mail/repo-outdated-packages-mail.service';
 
 @Processor('mail')
 export class MailProcessor {
@@ -16,8 +16,13 @@ export class MailProcessor {
     this.logger.debug('Start transcoding...');
     this.logger.debug(job.data);
     try {
-      const outdatedPackages = await this.repoSubscriptionService.listOutdatedPackages(job.data.repoUri);
-      this.repoOutDatedPackagesMailService.send(job.data.emails, { packageInfo: job.data, outdatedPackages });
+      const outdatedPackages = await this.repoSubscriptionService.listOutdatedPackages(
+        job.data.repoUri
+      );
+      this.repoOutDatedPackagesMailService.send(
+        job.data.emails, 
+        { packageInfo: job.data, outdatedPackages }
+      );
       this.logger.debug(outdatedPackages);
     }
     catch(e) {

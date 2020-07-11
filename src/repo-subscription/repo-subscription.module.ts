@@ -12,7 +12,7 @@ import { RepoSubscriptionsController } from './controllers/repo-subscriptions.co
 // import { repoSubscriptionProviders } from './providers/repo-subscription.providers';
 import { RepoSubscriptionService } from './services/repo-subscription.service';
 import { MailProcessor } from './processors/mail-processor';
-import { RepoOutDatedPackagesMailService } from './services/mail/repo-outdated-packages';
+import { RepoOutDatedPackagesMailService } from './services/mail/repo-outdated-packages-mail.service';
 import { MailSenderService } from './services/mail/sender/mail-sender';
 
 @Module({
@@ -43,7 +43,7 @@ import { MailSenderService } from './services/mail/sender/mail-sender';
           from:'"nest-modules" <modules@nestjs.com>',
         },
         template: {
-          dir: __dirname + '/templates',
+          dir: path.resolve(__dirname, '..', '..', 'templates'),
           adapter: new PugAdapter(),
           options: {
             strict: true,
