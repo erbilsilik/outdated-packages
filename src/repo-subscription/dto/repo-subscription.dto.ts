@@ -1,19 +1,19 @@
-import { IsEnum, IsEmail, Matches } from 'class-validator';
-import { Provider } from '../schemas/repo-subscription.schemas';
+import { IsEmail, Matches } from 'class-validator';
 
-const githubApi = 'https://api.github.com/repos/';
-const bitbucketApi = 'https://api.bitbucket.com/repos/';
-const gitlabApi = 'https://api.gitlab.com/repos/';
+const githubUrl = 'https://github.com';
+const bitbucketUrl = 'https://bitbucket.com';
+const gitlabUrl = 'https://gitlab.com';
 
+// enum Provider {
+//     GITHUB = 'github',
+//     GITLAB = 'bitbucket',
+//     BITBUCKET = 'gitlab',
+// };
 export class RepoSubscriptionDto {
-    @IsEnum(Provider,  { 
-        message: 
-        `only following providers are supported: ${Provider.GITHUB} - ${Provider.BITBUCKET} - ${Provider.GITLAB} ` 
-    })
-    readonly provider = Provider.GITHUB;
-    @Matches(/^https:\/\/api\.github\.com\/repos\/|https:\/\/api\.bitbucket\.com\/repos\/|https:\/\/api\.gitlab\.com\/repos\//, { 
+    //@Matches(/^https:\/\.github\.com|https:\/\.bitbucket\.com|https:\/\.gitlab\.com/, { 
+    @Matches(/https:\/\/github.com/, { 
         message:
-        `only following API's are supported: ${githubApi} - ${bitbucketApi} - ${gitlabApi} ` 
+        `only the following providers are supported: ${githubUrl} - ${bitbucketUrl} - ${gitlabUrl} ` 
     })
     readonly url: string;
     @IsEmail({}, { each: true })

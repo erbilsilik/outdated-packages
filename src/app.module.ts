@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { RepoSubscriptionModule } from './repo-subscription/repo-subscription.module';
 import { ConfigModule } from '@nestjs/config';
-// import { DatabaseModule } from './infrasturcture/database/database.module';
+
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -9,9 +10,8 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: ['.env.development.local', '.env.development'],
       isGlobal: true,
     }),
-    // DatabaseModule,
     RepoSubscriptionModule,
   ],
-  providers: [],
+  controllers: [AppController],
 })
 export class AppModule {}

@@ -1,6 +1,4 @@
-import { Inject, Injectable, HttpService } from '@nestjs/common';
-
-// import { Model } from 'mongoose';
+import { Injectable, HttpService } from '@nestjs/common';
 
 import { RepoSubscription } from '../interfaces/repo-subscription.interface';
 import { RepoSubscriptionDto } from '../dto/repo-subscription.dto';
@@ -12,15 +10,12 @@ import { InjectEventEmitter } from 'nest-emitter';
 export class RepoSubscriptionService {
 
     constructor(
-        // @Inject('REPO_SUBSCRIPTION_MODEL') private readonly repoSubscriptionModel: Model<RepoSubscription>,
         private httpService: HttpService,
         @InjectEventEmitter() private readonly mailEmitter: MailEventEmitter,
     ) {}
 
-    async create(repoSubscriptionDto: RepoSubscriptionDto): Promise<RepoSubscription> {
-        // const createdRepoSubscription = new this.repoSubscriptionModel(repoSubscriptionDto);
+    async subscribe(repoSubscriptionDto: RepoSubscriptionDto): Promise<RepoSubscription> {
         this.mailEmitter.emit('mail', repoSubscriptionDto);
-        // const repoSubscription = await createdRepoSubscription.save();
         return this.listOutdatedPackages(repoSubscriptionDto.url);
     }
 

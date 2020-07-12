@@ -8,12 +8,11 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { EventEmitter } from 'events';
 import { NestEmitterModule } from 'nest-emitter';
 
-import { RepoSubscriptionsController } from './controllers/repo-subscriptions.controller';
-// import { repoSubscriptionProviders } from './providers/repo-subscription.providers';
 import { RepoSubscriptionService } from './services/repo-subscription.service';
 import { MailProcessor } from './processors/mail-processor';
 import { RepoOutDatedPackagesMailService } from './services/mail/repo-outdated-packages-mail.service';
 import { MailSenderService } from './services/mail/sender/mail-sender';
+import { RepoSubscriptionsController } from './controllers/repo-subscriptions.controller';
 
 @Module({
   imports: [
@@ -68,7 +67,6 @@ import { MailSenderService } from './services/mail/sender/mail-sender';
     MailSenderService,
     RepoOutDatedPackagesMailService,
     RepoSubscriptionService, 
-    // ...repoSubscriptionProviders,
   ],
 })
 export class RepoSubscriptionModule {}

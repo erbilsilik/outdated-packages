@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { InjectEventEmitter } from 'nest-emitter';
 import { MailEventEmitter } from 'src/repo-subscription/events/app.events';
-import { RepoSubscriptionDto } from 'src/repo-subscription/dto/repo-subscription.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import { RepoSubscriptionDto } from 'src/repo-subscription/dto/repo-subscription.dto';
 
 @Injectable()
 export class MailSenderService implements OnModuleInit {

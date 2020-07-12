@@ -13,8 +13,13 @@ export class RepoSubscriptionsController {
     @Post()
     async create(@Body() repoSubscriptionDto: RepoSubscriptionDto) {
         try {
-            await this.httpService.get(repoSubscriptionDto.url).toPromise();
-            return await this.repoSubscriptionService.create(repoSubscriptionDto);
+            const [, , , userName, repositoryName] = repoSubscriptionDto.url.split('/');
+            const url = `https://api.github.com/repos/${userName}/${repositoryName}`;
+            const repoSubscription: RepoSubscriptionDto = { ...repoSubscriptionDto, url };
+            const { data: repository } = await this.httpService.get(repoSubscription.url).toPromise();
+            const { data: languages } = await this.httpService.get(repository.languages_url).toPromise(); 
+            const repositoryLanguage = Object.keys(languages).reduce((a, b) => languages[a] > languages[b] ? a : b);
+            return await this.repoSubscriptionService.subscribe(repoSubscription);
         }
         catch(e) {
             throw new HttpException({
