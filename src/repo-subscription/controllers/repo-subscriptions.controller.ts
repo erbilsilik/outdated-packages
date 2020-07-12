@@ -19,7 +19,7 @@ export class RepoSubscriptionsController {
             const { data: repository } = await this.httpService.get(repoSubscription.url).toPromise();
             const { data: languages } = await this.httpService.get(repository.languages_url).toPromise(); 
             const repositoryLanguage = Object.keys(languages).reduce((a, b) => languages[a] > languages[b] ? a : b);
-            return await this.repoSubscriptionService.subscribe(repoSubscription);
+            return await this.repoSubscriptionService.subscribe(repoSubscription, repositoryLanguage);
         }
         catch(e) {
             throw new HttpException({

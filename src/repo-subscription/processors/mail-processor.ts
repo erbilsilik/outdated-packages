@@ -17,7 +17,7 @@ export class MailProcessor {
     this.logger.debug(job.data);
     try {
       const outdatedPackages = await this.repoSubscriptionService.listOutdatedPackages(
-        job.data.repoUri
+        job.data.repoUri, 'Javascript' // fix this
       );
       this.repoOutDatedPackagesMailService.send(
         job.data.emails, 

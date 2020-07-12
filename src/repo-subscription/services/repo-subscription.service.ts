@@ -5,6 +5,7 @@ import { RepoSubscriptionDto } from '../dto/repo-subscription.dto';
 import semver from './semver';
 import { MailEventEmitter } from '../events/app.events';
 import { InjectEventEmitter } from 'nest-emitter';
+import { LanguageAdapter } from '../adapters/languages/language-adapter';
 
 @Injectable()
 export class RepoSubscriptionService {
@@ -14,14 +15,17 @@ export class RepoSubscriptionService {
         @InjectEventEmitter() private readonly mailEmitter: MailEventEmitter,
     ) {}
 
-    async subscribe(repoSubscriptionDto: RepoSubscriptionDto): Promise<RepoSubscription> {
+    async subscribe(repoSubscriptionDto: RepoSubscriptionDto, language): Promise<RepoSubscription> {
         this.mailEmitter.emit('mail', repoSubscriptionDto);
-        return this.listOutdatedPackages(repoSubscriptionDto.url);
+        return this.listOutdatedPackages(repoSubscriptionDto.url, language);
     }
 
     // list outdated packages use-case
-    async listOutdatedPackages(repoUri: string): Promise<any> {
-        const { data: repoInfo } = await this.httpService.get(repoUri + '/contents/package.json').toPromise();
+    async listOutdatedPackages(repoUri: string, language: string): Promise<any> {
+        const languageAdapter = new LanguageAdapter(language);
+        const repoDependenciesFileName = languageAdapter.getRepoDependenciesFileName();
+        const packageContentUrl = `${repoUri}/contents/${repoDependenciesFileName}`;
+        const { data: repoInfo } = await this.httpService.get(packageContentUrl).toPromise();
         const { dependencies, devDependencies } = JSON.parse(this.decode(repoInfo.content));
         const dependencyList = this.getDependencyList(dependencies, devDependencies);
         const latestVersions = await Promise.all(
