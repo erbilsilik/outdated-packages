@@ -12,21 +12,22 @@ export class MailProcessor {
     ) {}
   private readonly logger = new Logger(MailProcessor.name);
   @Process()
-  async transcode(job: Job<any>) {
-    this.logger.debug('Start transcoding...');
+  async process(job: Job<any>) {
+    this.logger.debug('Start processing...');
     this.logger.debug(job.data);
     try {
-      const outdatedPackages = await this.repoSubscriptionService.listOutdatedPackages(job.data.repoUri);
+      const packageFiles = await this.repoSubscriptionService.listOutdatedPackages(job.data.repoUri);
+      this.logger.debug(packageFiles);
       this.repoOutDatedPackagesMailService.send(
         job.data.emails, 
-        { packageInfo: job.data, outdatedPackages }
+        { packageInfo: job.data, packageFiles }
       );
-      this.logger.debug(outdatedPackages);
+      this.logger.debug(packageFiles);
     }
     catch(e) {
-      this.logger.debug(`Error: ${e} from transcoding`);
+      this.logger.debug(`Error: ${e} from processing`);
     }
-    this.logger.debug('Transcoding completed');
+    this.logger.debug('Processing completed');
     return {};
   }
 }

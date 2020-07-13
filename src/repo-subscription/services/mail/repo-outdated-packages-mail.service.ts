@@ -5,7 +5,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class RepoOutDatedPackagesMailService {
   constructor(private readonly mailerService: MailerService) {}
   
-  public send(to: Array<string>, { packageInfo: { repoUri }, outdatedPackages }): void {
+  public send(to: Array<string>, { packageInfo: { repoUri }, packageFiles }): void {
     this
       .mailerService
       .sendMail({
@@ -14,7 +14,7 @@ export class RepoOutDatedPackagesMailService {
         subject: `${new Date().toDateString()} - ${repoUri} outdated packages`,
         template: 'outdated-packages',
         context: {
-          outdatedPackages
+          packageFiles
         },
       })
       .then(() => { 
