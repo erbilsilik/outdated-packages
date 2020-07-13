@@ -27,7 +27,10 @@ export class LanguageAdapter implements ILanguage {
   }
 
   public static getPackageNames() {
-    return ['package.json', 'composer.json'];
+    return [
+      'package.json',
+      'composer.json',
+    ];
   }
 
   private createInstance() {
