@@ -9,46 +9,56 @@ import { LanguageAdapter } from '../adapters/languages/language-adapter';
 
 @Injectable()
 export class RepoSubscriptionService {
+    private languageAdapter: LanguageAdapter;
 
     constructor(
         private httpService: HttpService,
         @InjectEventEmitter() private readonly mailEmitter: MailEventEmitter,
     ) {}
 
-    async subscribe(repoSubscriptionDto: RepoSubscriptionDto, language): Promise<RepoSubscription> {
-        this.mailEmitter.emit('mail', repoSubscriptionDto);
-        return this.listOutdatedPackages(repoSubscriptionDto.url, language);
+    async subscribe(repoSubscriptionDto: RepoSubscriptionDto): Promise<RepoSubscription> {
+        // this.mailEmitter.emit('mail', repoSubscriptionDto);
+        return this.listOutdatedPackages(repoSubscriptionDto.url);
     }
 
-    // list outdated packages use-case
-    async listOutdatedPackages(repoUri: string, language: string): Promise<any> {
-        const languageAdapter = new LanguageAdapter(language);
-        const repoDependenciesFileName = languageAdapter.getRepoDependenciesFileName();
-        const packageContentUrl = `${repoUri}/contents/${repoDependenciesFileName}`;
-        const { data: repoInfo } = await this.httpService.get(packageContentUrl).toPromise();
-        const { dependencies, devDependencies } = JSON.parse(this.decode(repoInfo.content));
-        const dependencyList = this.getDependencyList(dependencies, devDependencies);
-        const latestVersions = await Promise.all(
-            dependencyList.map(async ([key]) => await this.getLatestVersion(key))
-        );
-        return dependencyList.reduce((outDatedPackages, [name, currentVersion], index) => {
-            const latestVersion = latestVersions[index];
-            if (latestVersion && semver.isOutDated(currentVersion, latestVersion)) {
-              return [
-                ...outDatedPackages,
-                {
-                  name,
-                  currentVersion,
-                  latestVersion: latestVersions[index],
-                },
-              ];
-            }
-            return outDatedPackages;
-          }, []);
-    }
+    async listOutdatedPackages(repoUri: string): Promise<any> {
+        let totalPackageFile = 0;
+        const repoContentUrl = `${repoUri}/contents`;
+        const { data: repoInfo } = await this.httpService.get(repoContentUrl).toPromise();
+        const packageFiles: any = Object.values(repoInfo).reduce((outDatedPackages: Array<any>, { name }) => 
+            LanguageAdapter.getPackageNames().includes(name) ? [...outDatedPackages, name] : outDatedPackages, []);
 
-    private decode(content): string {
-        return Buffer.from(content, 'base64').toString('ascii');
+        const packages = {};
+
+        while (totalPackageFile < packageFiles.length) {
+            const packageFile: string = packageFiles[totalPackageFile];
+            this.languageAdapter = new LanguageAdapter(packageFile);
+            const { data: repoInfo }: any = await this.httpService.get(`${repoContentUrl}/${packageFile}`).toPromise();
+            const content = JSON.parse(Buffer.from(repoInfo.content, 'base64').toString('ascii'));
+            const dependencies = content[this.languageAdapter.getDependencyKeys()['dependencies']];
+            const devDependencies = content[this.languageAdapter.getDependencyKeys()['devDependencies']];
+            const dependencyList = this.getDependencyList(dependencies, devDependencies);
+            const latestVersions = await Promise.all(
+                dependencyList.map(async ([key]) => await this.getLatestVersion(key))
+            );
+            packages[packageFiles[totalPackageFile]] =
+                dependencyList.reduce((outDatedPackages: Array<any>, [name, currentVersion], index: number) => {
+                    const latestVersion = latestVersions[index];
+                    if (latestVersion && semver.isOutDated(currentVersion, latestVersion)) {
+                        return [
+                            ...outDatedPackages,
+                            {
+                            name,
+                            currentVersion,
+                            latestVersion: latestVersions[index],
+                            },
+                        ];
+                    }
+                    return outDatedPackages;
+                }, []);
+        }
+        totalPackageFile++;
+        return packages;
     }
 
     private getDependencyList(dependencies, devDependencies): any {
@@ -56,35 +66,18 @@ export class RepoSubscriptionService {
             dependencies: Object.entries(dependencies),
             devDependencies: Object.entries(devDependencies)
         };
-        return Object.values(dependencyList)
-            .reduce((flattenedDependencies: Array<any>, dependencies: Array<any>) => (
-                [...flattenedDependencies, ...dependencies]), []
-            );
+        return Object.values(dependencyList).flat();
+            // .reduce((flattenedDependencies: Array<any>, dependencies: Array<any>) => (
+            //     [...flattenedDependencies, ...dependencies]), []
+            // );
     }
 
-    async getLatestVersion(packageName: string) {
-        if (this.isScopedPackage(packageName)) {
-            return this.callScopedPackageProvider(packageName);
+    async getLatestVersion(repoName: string) {
+        const url = this.languageAdapter.getRegistryUrl(repoName);
+        if (url) {
+            const result = await this.httpService.get(url).toPromise();
+            if (result) return this.languageAdapter.getVersionFromResponse(repoName, result.data);
         }
-        return this.callPackageProvider(packageName);
-    }
-
-    private isScopedPackage(packageName: string) {
-        return packageName.charAt(0) === '@';
-    }
-
-    async callScopedPackageProvider(packageName) {
-        const [scope, scopedPackageName] = packageName.split('/');
-        const url = `https://registry.npmjs.org/${scope}${encodeURIComponent('/')}${scopedPackageName}`;
-        const result = await this.httpService.get(url).toPromise();
-        if (result) return result.data['dist-tags'].latest;
-        return null;
-    }
-
-    async callPackageProvider(packageName) {
-        const url = `https://registry.npmjs.org/${packageName}/latest`;
-        const result = await this.httpService.get(url).toPromise();
-        if (result) return result.data.version;
         return null;
     }
 }

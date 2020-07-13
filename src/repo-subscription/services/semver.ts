@@ -1,33 +1,37 @@
-const NR = '(?:0|[1-9])[0-9]*';
-const BUILD = NR;
-const PRE = `[0-9a-zA-Z\\-]+(?:\\.${NR})?`;
-const QUALIFIER = `-(?:${PRE})?(?:\\+${BUILD})?`;
-const XR = `(?:[xX\\*]|${NR})`;
-const PARTIAL = `${XR}(?:\\.${XR}(?:\\.${XR}(?:${QUALIFIER})?)?)?`;
-const CARET = `\\^\\s*${PARTIAL}`;
-const TILDE = `~\\s*${PARTIAL}`;
-const PRIMITIVE = `(?:<|>|<=|>=)\\s*${PARTIAL}`;
-const SIMPLE = `(?:${PRIMITIVE}|${PARTIAL}|${TILDE}|${CARET})`;
-const HYPHEN = `${PARTIAL}\\s-\\s${PARTIAL}`;
-const RANGE = `(?:${HYPHEN}|${SIMPLE}(?:\\s+${SIMPLE})*)`;
-const LOGICAL_OR = `\\s*\\|\\|\\s*`;
-const RANGE_SET = `${RANGE}(?:${LOGICAL_OR}${RANGE})+`;
-const STRICT = `(?:=\\s*)?${NR}\\.${NR}\\.${NR}(?:${QUALIFIER})?`;
-const WILDCARD = `(?:[xX\\*]|${NR}\\.[xX\\*]|${NR}\\.${NR}\\.[xX\\*])`;
-// const PESSIMISTIC = `~>\\s*${PARTIAL}`;
+const compareVersion = (left: string, right: string) => {
+    if (typeof left + typeof right != 'stringstring')
+        return false;
+    
+    const a = left.split('.');
+    const b = right.split('.');
+    let i = 0;
+    const len = Math.max(a.length, b.length);
+        
+    for (; i < len; i++) {
+        if ((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) return true; 
+        if ((b[i] && !a[i] && parseInt(b[i]) > 0) || (parseInt(a[i]) < parseInt(b[i]))) return false;
+    }
+    return false;
+}
 
 export default {
-    isOutDated: (currentVersion, latestVersion) => {
-        if (new RegExp(`^${CARET}$`).exec(currentVersion)) {
-            // check for major zero
-            const latestVersionNumericValue = Number(latestVersion.replace(/\./g, ''))
-            const currentVersionNumericValue = Number(currentVersion.replace(/^\^/, '').replace(/\./g, ''))
-            return latestVersionNumericValue > currentVersionNumericValue
-        }
-        if (new RegExp(`^${TILDE}$`).exec(currentVersion)) {
-            const latestVersionNumericValue = Number(latestVersion.replace(/\./g, ''))
-            const currentVersionNumericValue = Number(currentVersion.replace(/^\~/, '').replace(/\./g, ''))
-            return latestVersionNumericValue > currentVersionNumericValue
+    isOutDated: (currentVersion: string, latestVersion: any): boolean => {
+        if (
+            /^(\*|\d+(\.\d+)*(\.\*)?)$/.exec(currentVersion) || // TODO move to another file and make constant
+            /^v(\*|\d+(\.\d+)*(\.\*)?)$/.exec(currentVersion) ||
+            /^~(\*|\d+(\.\d+)*(\.\*)?)$/.exec(currentVersion)
+        ) {
+            let currentVersionModified = currentVersion;
+            let latestVersionModified = latestVersion;
+            ['v', '~', '^'].forEach(char => {
+                if (currentVersion.startsWith(char)) {
+                    currentVersionModified = currentVersion.replace(char, '');
+                }
+                if (latestVersion.startsWith(char)) {
+                    latestVersionModified = latestVersion.replace(char, '');
+                }
+            });
+            return compareVersion(currentVersionModified, latestVersionModified);
         }
         return true;
     }
