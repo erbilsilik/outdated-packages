@@ -7,8 +7,6 @@ Subscribe from the following URL for Javascript/Typescript and PHP repositories,
 ## Screenshots
 
 ![Image of Yaktocat](https://github.com/erbilsilik/outdated-packages/blob/master/intro.png)
-![Image of Yaktocat](https://github.com/erbilsilik/outdated-packages/blob/master/supports.png)
-
 
 ## 🚀&nbsp; Installation and Running
 
