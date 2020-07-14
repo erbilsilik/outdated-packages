@@ -22,6 +22,42 @@ Subscribe to get email every day about the package updates (Currently only suppo
 
 `` docker run -p 8080:8080 outdated-packages ``
 
+## Configurations
+
+.env file
+
+```
+NODE_ENV=
+PORT=
+
+MAIL_HOST=
+MAIL_PORT=
+MAIL_USER=
+MAIL_PASS=
+
+REDIS_HOST=
+REDIS_PASSWORD=
+REDIS_PORT=
+
+GITHUB_OAUTH_TOKEN=
+
+SENDGRID_API_KEY=
+SENDGRID_EMAIL=
+SENDGRID_PASSWORD=
+```
+
+CURL 
+
+```
+curl --request POST \
+  --url http://localhost:8080/api/v1/repo-subscriptions \
+  --header 'content-type: application/json' \
+  --data '{
+	"url": "https://github.com/axios/axios", 
+	"emails": ["your.email@yme.com", "your.email2@me.com"]
+}'
+```
+
 
 ## 🤝&nbsp; Found a bug? Missing a specific feature? Want to support?
 
