@@ -1,3 +1,5 @@
+import { PACKAGE_JSON } from "./language-adapter";
+
 export interface IJavascript {
     getRepoDependenciesFileName(): string;
     getRegistryUrl(repositoryName: string): string;
@@ -7,7 +9,7 @@ const NPM_REGISTRY = 'https://registry.npmjs.org';
   
 export class Javascript implements IJavascript {
     public getRepoDependenciesFileName(): string {
-        return 'package.json';
+        return PACKAGE_JSON;
     }
 
     public getRegistryUrl(repositoryName: string): string {

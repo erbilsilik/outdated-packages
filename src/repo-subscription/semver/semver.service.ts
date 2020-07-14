@@ -1,5 +1,5 @@
 /*
-    TODO Implement 3rd Party support for better results;
+    TODO Implement 3rd Party support for better results
         - https://github.com/npm/node-semver
         - https://www.npmjs.com/package/@types/semver
 */

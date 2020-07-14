@@ -1,3 +1,5 @@
+import { COMPOSER_JSON } from "./language-adapter";
+
 export interface IPhp {
     getRepoDependenciesFileName(): string;
     getRegistryUrl(repositoryName: string): string;
@@ -7,7 +9,7 @@ const PACKGAIST_REGISTRY = 'https://repo.packagist.org/p';
   
 export class Php implements IPhp {
     public getRepoDependenciesFileName(): string {
-        return 'composer.json';
+        return COMPOSER_JSON;
     }
 
     public getRegistryUrl(repositoryName: string): string {
@@ -19,6 +21,13 @@ export class Php implements IPhp {
 
     public getVersionFromResponse(repositoryName: string, data: any) {
         return this.resolveLatestRelease(Object.keys(data['packages'][repositoryName]));
+    }
+
+    public getDependencyKeys() {
+        return {
+            dependencies: 'require',
+            devDependencies: 'require-dev',
+        };
     }
 
     private resolveLatestRelease(releases) {
@@ -35,12 +44,5 @@ export class Php implements IPhp {
             }
         }
         return latestVersion;
-    }
-
-    public getDependencyKeys() {
-        return {
-            dependencies: 'require',
-            devDependencies: 'require-dev',
-        };
     }
 }

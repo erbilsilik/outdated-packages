@@ -3,7 +3,6 @@ export enum GITHUB {
     API_URL = 'https://api.github.com',
 }
 
-
 export default {
     GITHUB,
 }
