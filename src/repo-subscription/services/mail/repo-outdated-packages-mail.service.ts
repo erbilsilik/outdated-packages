@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RepoOutDatedPackagesMailService {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+    private readonly mailerService: MailerService,
+    private readonly configService: ConfigService,
+    ) {}
   
   public send(to: Array<string>, { packageInfo: { repoUri }, packageFiles }): void {
     this
       .mailerService
       .sendMail({
         to,
-        from: 'outdated-packages@mail.com',
+        from: this.configService.get<string>('SENDGRID_EMAIL'),
         subject: `${new Date().toDateString()} - ${repoUri} outdated packages`,
         template: 'outdated-packages',
         context: {

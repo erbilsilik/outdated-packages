@@ -28,6 +28,8 @@
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
+    "@ntegral/nestjs-sendgrid": "^1.0.0",
+    "@sendgrid/mail": "^7.2.1",
     "bull": "^3.15.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.2",
