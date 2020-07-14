@@ -1,12 +1,11 @@
 import { Injectable, HttpService } from '@nestjs/common';
 
 import { RepoSubscription } from '../interfaces/repo-subscription.interface';
-import { RepoSubscriptionDto } from '../dto/repo-subscription.dto';
-import semver from './compare-version';
 import { MailEventEmitter } from '../events/app.events';
 import { InjectEventEmitter } from 'nest-emitter';
 import { LanguageAdapter } from '../adapters/languages/language-adapter';
 import { ConfigService } from '@nestjs/config';
+import { SemverService } from '../semver/semver.service';
 
 @Injectable()
 export class RepoSubscriptionService {
@@ -16,11 +15,12 @@ export class RepoSubscriptionService {
         private httpService: HttpService,
         @InjectEventEmitter() private readonly mailEmitter: MailEventEmitter,
         private configService: ConfigService,
+        private semverService: SemverService,
     ) {}
 
-    async subscribe(repoSubscriptionDto: RepoSubscriptionDto): Promise<RepoSubscription> {
-        this.mailEmitter.emit('mail', repoSubscriptionDto);
-        return this.listOutdatedPackages(repoSubscriptionDto.url);
+    async subscribe(repoSubscription: RepoSubscription): Promise<RepoSubscription> {
+        this.mailEmitter.emit('mail', repoSubscription);
+        return this.listOutdatedPackages(repoSubscription.url);
     }
 
     async listOutdatedPackages(repoUri: string): Promise<any> {
@@ -54,7 +54,7 @@ export class RepoSubscriptionService {
             packages[packageFiles[totalPackageFile]] =
                 dependencyList.reduce((outDatedPackages: Array<any>, [name, currentVersion], index: number) => {
                     const latestVersion = latestVersions[index];
-                    if (latestVersion && semver.isOutDated(currentVersion, latestVersion)) {
+                    if (latestVersion && this.isOutDated(currentVersion, latestVersion)) {
                         return [
                             ...outDatedPackages,
                             {
@@ -86,5 +86,14 @@ export class RepoSubscriptionService {
             if (result) return this.languageAdapter.getVersionFromResponse(repoName, result.data);
         }
         return null;
+    }
+
+    private isOutDated(currentVersion: string, latestVersion: any): boolean{
+        const currentVersionCastedToNumber: string = this.semverService.castToNumber(currentVersion);
+        const latestVersionCastedToNumber: string = this.semverService.castToNumber(latestVersion);
+        const result: boolean = this.semverService.compareVersion(
+            currentVersionCastedToNumber, latestVersionCastedToNumber
+        );
+        return result;
     }
 }

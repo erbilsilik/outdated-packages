@@ -10,10 +10,11 @@ import { EventEmitter } from 'events';
 import { NestEmitterModule } from 'nest-emitter';
 
 import { RepoSubscriptionService } from './services/repo-subscription.service';
-import { MailProcessor } from './processors/mail-processor';
-import { RepoOutDatedPackagesMailService } from './services/mail/repo-outdated-packages-mail.service';
-import { MailSenderService } from './services/mail/sender/mail-sender';
+import { OutdatedPackageMailService } from './mail/outdated-package-mail.service';
 import { RepoSubscriptionsController } from './controllers/repo-subscriptions.controller';
+import { SemverService } from './semver/semver.service';
+import { OutdatedPackageMailProcessor } from './mail/processors/outdated-package-mail-processor';
+import { OutdatedPackageJobMailService } from './mail/jobs/outdated-package-job-mail.service';
 
 @Module({
   imports: [
@@ -37,21 +38,21 @@ import { RepoSubscriptionsController } from './controllers/repo-subscriptions.co
     }),
     MailerModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
-        // transport: { // for mailtrap
-        //   host: configService.get<string>('MAIL_HOST'),
-        //   port: configService.get<number>('MAIL_PORT'),
-        //   auth: {
-        //     user: configService.get<number>('MAIL_USER'),
-        //     pass: configService.get<number>('MAIL_PASS')
-        //   },
-        // },
-        transport: {
-          service: 'SendGrid',
+        transport: { // for mailtrap
+          host: configService.get<string>('MAIL_HOST'),
+          port: configService.get<number>('MAIL_PORT'),
           auth: {
-            user: configService.get<string>('SENDGRID_EMAIL'),
-            pass: configService.get<string>('SENDGRID_PASSWORD')
-          }
+            user: configService.get<number>('MAIL_USER'),
+            pass: configService.get<number>('MAIL_PASS')
+          },
         },
+        // transport: {
+        //   service: 'SendGrid',
+        //   auth: {
+        //     user: configService.get<string>('SENDGRID_EMAIL'),
+        //     pass: configService.get<string>('SENDGRID_PASSWORD')
+        //   }
+        // },
         defaults: {
           from:'"nest-modules" <modules@nestjs.com>',
         },
@@ -77,10 +78,11 @@ import { RepoSubscriptionsController } from './controllers/repo-subscriptions.co
   ],
   controllers: [RepoSubscriptionsController],
   providers: [
-    MailProcessor,
-    MailSenderService,
-    RepoOutDatedPackagesMailService,
+    OutdatedPackageJobMailService,
+    OutdatedPackageMailProcessor,
+    OutdatedPackageMailService,
     RepoSubscriptionService, 
+    SemverService,
   ],
 })
 export class RepoSubscriptionModule {}

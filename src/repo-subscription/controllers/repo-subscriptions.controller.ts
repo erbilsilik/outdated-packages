@@ -3,6 +3,7 @@ import { RepoSubscriptionService } from '../services/repo-subscription.service';
 import { Post, Body } from '@nestjs/common';
 import { RepoSubscriptionDto } from '../dto/repo-subscription.dto';
 import { ConfigService } from '@nestjs/config';
+import { GITHUB } from '../constants';
 
 @Controller('repo-subscriptions')
 export class RepoSubscriptionsController {
@@ -14,10 +15,9 @@ export class RepoSubscriptionsController {
 
     @Post()
     async create(@Body() repoSubscriptionDto: RepoSubscriptionDto) {
-        const GITHUB_API = 'https://api.github.com';
         try {
             const [, , , userName, repositoryName] = repoSubscriptionDto.url.split('/');
-            const url = `${GITHUB_API}/repos/${userName}/${repositoryName}`;
+            const url = `${GITHUB.API_URL}/repos/${userName}/${repositoryName}`;
             const repoSubscription: RepoSubscriptionDto = { ...repoSubscriptionDto, url };
             await this.httpService.get(repoSubscription.url, {
                 headers: {

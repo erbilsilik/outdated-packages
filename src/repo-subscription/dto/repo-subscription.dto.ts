@@ -1,11 +1,10 @@
 import { IsEmail, Matches } from 'class-validator';
-
-const githubUrl = 'https://github.com';
+import { GITHUB } from '../constants';
 
 export class RepoSubscriptionDto {
     @Matches(/https:\/\/github.com/, { 
         message:
-        `only the following provider is supported: ${githubUrl}` 
+        `only the following provider is supported: ${GITHUB.HTML_URL}` 
     })
     readonly url: string;
     @IsEmail({}, { each: true })
