@@ -38,21 +38,13 @@ import { OutdatedPackageJobMailService } from './mail/jobs/outdated-package-job-
     }),
     MailerModule.forRootAsync({
       useFactory: (configService: ConfigService) => ({
-        transport: { // for mailtrap
-          host: configService.get<string>('MAIL_HOST'),
-          port: configService.get<number>('MAIL_PORT'),
+        transport: {
+          service: 'SendGrid',
           auth: {
-            user: configService.get<number>('MAIL_USER'),
-            pass: configService.get<number>('MAIL_PASS')
-          },
+            user: configService.get<string>('SENDGRID_EMAIL'),
+            pass: configService.get<string>('SENDGRID_PASSWORD')
+          }
         },
-        // transport: {
-        //   service: 'SendGrid',
-        //   auth: {
-        //     user: configService.get<string>('SENDGRID_EMAIL'),
-        //     pass: configService.get<string>('SENDGRID_PASSWORD')
-        //   }
-        // },
         defaults: {
           from:'"nest-modules" <modules@nestjs.com>',
         },
