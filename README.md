@@ -1,23 +1,23 @@
+## About
+
 **Repository Outdated Packages** is a open-source **package version notifier tool** based on [Nestjs](https://nestjs.com/) application.
 Subscribe from the following URL for Javascript/Typescript and PHP repositories, to be emailed every day about new versions. 
 
 
 ## Screenshots
 
-![Image of Yaktocat](https://github.com/erbilsilik/outdated-packages/blob/master/intro.jpg)
-![Image of Yaktocat](https://github.com/erbilsilik/outdated-packages/blob/master/subscribe.jpg)
+![Image of Yaktocat](https://github.com/erbilsilik/outdated-packages/blob/master/intro.png)
+![Image of Yaktocat](https://github.com/erbilsilik/outdated-packages/blob/master/supports.png)
 
 
 ## 🚀&nbsp; Installation and Running
 
-## Running the app
-
 ### `` npm install && npm run start ``
 
-### Docker
+#### Docker
 
 `` docker build -t outdated-packages .``
-`` docker run -p 8080:8080 outdated-packages
+`` docker run -p 8080:8080 outdated-packages ``
 
 
 ## 🤝&nbsp; Found a bug? Missing a specific feature?
