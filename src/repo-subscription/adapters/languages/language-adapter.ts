@@ -2,6 +2,9 @@ import { Typescript } from "./typescript";
 import { Javascript } from "./javascript";
 import { Php } from "./php";
 
+export const PACKAGE_JSON = 'package.json';
+export const COMPOSER_JSON = 'composer.json';
+
 export interface ILanguage {
   getRepoDependenciesFileName(): string;
   getRegistryUrl(repositoryName: string): string;
@@ -20,20 +23,20 @@ export class LanguageAdapter implements ILanguage {
 
   private getCallableClasses(): Record<string, Function> {
     return {
-      'package.json': () => new Typescript(),
+      [PACKAGE_JSON]: () => new Typescript(),
       // 'package.json': () => new Javascript(),
-      'composer.json': () => new Php(),
+      [COMPOSER_JSON]: () => new Php(),
     };
   }
 
-  public static getPackageNames() {
+  public static getPackageNames(): Array<string> {
     return [
-      'package.json',
-      'composer.json',
+      PACKAGE_JSON,
+      COMPOSER_JSON,
     ];
   }
 
-  private createInstance() {
+  private createInstance(): ILanguage {
     return this.getCallableClasses()[this.packageFile]();
   }
 
@@ -49,7 +52,7 @@ export class LanguageAdapter implements ILanguage {
     return this.languageInstance.getDependencyKeys();
   }
 
-  public getVersionFromResponse(repositoryName: string, res): string {
+  public getVersionFromResponse(repositoryName: string, res: any): string {
     return this.languageInstance.getVersionFromResponse(repositoryName, res);
   }
 }

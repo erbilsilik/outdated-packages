@@ -17,7 +17,3 @@ COPY . .
 
 EXPOSE 8080
 CMD [ "npm", "start" ]
-
-
-#docker build -t outdated-packages .
-# docker run -p 3000:3000 outdated-packages

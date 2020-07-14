@@ -1,6 +1,4 @@
-import { Document } from 'mongoose';
-
-export interface RepoSubscription extends Document {
+export interface RepoSubscription {
     readonly url: string;
     readonly emails: Array<string>;
 }
