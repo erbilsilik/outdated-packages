@@ -82,7 +82,7 @@ export class RepoSubscriptionService {
     async getLatestVersion(repoName: string) {
         const url = this.languageAdapter.getRegistryUrl(repoName);
         if (url) {
-            const result = await this.httpService.get(url).toPromise();
+            const result = await this.httpService.get(url).toPromise().catch(() => null);
             if (result) return this.languageAdapter.getVersionFromResponse(repoName, result.data);
         }
         return null;

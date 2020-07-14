@@ -9,9 +9,10 @@ async function bootstrap() {
   const server = express();
   server.locals.basedir = join(__dirname, '..', 'views');
   const app = await NestFactory.create<NestExpressApplication>(AppModule, new ExpressAdapter(server));
+  app.enableCors();
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('pug');
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  await app.listen(8080);
 }
 bootstrap();
