@@ -10,11 +10,12 @@ Subscribe from the following URL for Javascript/Typescript and PHP repositories,
 
 ## 🚀&nbsp; Installation and Running
 
-### `` npm install && npm run start ``
+`` npm install && npm run start ``
 
 #### Docker
 
 `` docker build -t outdated-packages .``
+
 `` docker run -p 8080:8080 outdated-packages ``
 
 
@@ -24,7 +25,3 @@ Subscribe from the following URL for Javascript/Typescript and PHP repositories,
 - 
 
 Feel free to **file a new issue** with a respective title and description. If you already found a solution to your problem, **we would love to review your pull request**!
-
-
-## 📘&nbsp; License
-The Outdated Packages system is released under the under terms of the [MIT License](LICENSE).
