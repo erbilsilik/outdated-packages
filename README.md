@@ -22,10 +22,47 @@ Subscribe to get email every day about the package updates (Currently only suppo
 
 `` docker run -p 8080:8080 outdated-packages ``
 
+## Configurations
 
-## 🤝&nbsp; Found a bug? Missing a specific feature?
+.env file
 
-- Currently we only support Javascript/Typescript and PHP. You are welcome to support for other languages. 
-- 
+```
+NODE_ENV=
+PORT=
+
+MAIL_HOST=
+MAIL_PORT=
+MAIL_USER=
+MAIL_PASS=
+
+REDIS_HOST=
+REDIS_PASSWORD=
+REDIS_PORT=
+
+GITHUB_OAUTH_TOKEN=
+
+SENDGRID_API_KEY=
+SENDGRID_EMAIL=
+SENDGRID_PASSWORD=
+```
+
+CURL 
+
+```
+curl --request POST \
+  --url http://localhost:8080/api/v1/repo-subscriptions \
+  --header 'content-type: application/json' \
+  --data '{
+	"url": "https://github.com/axios/axios", 
+	"emails": ["your.email@yme.com", "your.email2@me.com"]
+}'
+```
+
+
+## 🤝&nbsp; Found a bug? Missing a specific feature? Want to support?
+
+- Currently we only support Javascript/Typescript and PHP. You are welcome to support for other languages
+- Tests are missing
+- 3rd party Semver module integration for more accuracy
 
 Feel free to **file a new issue** with a respective title and description. If you already found a solution to your problem, **we would love to review your pull request**!
