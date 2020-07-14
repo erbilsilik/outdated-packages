@@ -1,4 +1,4 @@
-## About
+## Repository Outdated Packages
 
 **Repository Outdated Packages** is a open-source **package version notifier tool** based on [Nestjs](https://nestjs.com/) application.
 Subscribe from the following URL for Javascript/Typescript and PHP repositories, to be emailed every day about new versions. 
