@@ -8,6 +8,8 @@ Subscribe from the following URL for Javascript/Typescript and PHP repositories,
 
 ![Image of Yaktocat](https://github.com/erbilsilik/outdated-packages/blob/master/intro.png)
 
+![Image of Yaktocat](https://github.com/erbilsilik/outdated-packages/blob/master/outdated-packages.png)
+
 ## 🚀&nbsp; Installation and Running
 
 `` npm install && npm run start ``
