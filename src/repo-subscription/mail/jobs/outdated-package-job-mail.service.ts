@@ -25,10 +25,10 @@ export class OutdatedPackageJobMailService implements OnModuleInit {
         },
         {
             removeOnFail: false,
-            repeat: {
-                startDate: new Date(),
-                cron: '0 0 * * *', // https://crontab.guru/examples.html
-            },
+            // repeat: {
+            //     startDate: new Date(),
+            //     cron: '0 0 * * *', // https://crontab.guru/examples.html
+            // },
         },
     );
     this.mailQueue.getJobCounts().then((res) => this.logger.debug(res));
