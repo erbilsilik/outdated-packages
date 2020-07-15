@@ -33,10 +33,12 @@ Subscribe to get email every day about the package updates (Currently only suppo
 NODE_ENV=
 PORT=
 
+// not necessarily (I just used for Mailtrap in dev mode)
 MAIL_HOST=
 MAIL_PORT=
 MAIL_USER=
 MAIL_PASS=
+// 
 
 REDIS_HOST=
 REDIS_PASSWORD=
