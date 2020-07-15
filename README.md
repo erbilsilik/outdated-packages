@@ -3,6 +3,9 @@
 **Repository Outdated Packages** is an open-source **package version compare and notifier tool** based on [Nestjs](https://nestjs.com/) application.
 Subscribe to get email every day about the package updates (Currently only supported for Javascript/Typescript and PHP applications).
 
+## Online Demonstration
+
+- https://outdated-packages-marketing.herokuapp.com/
 
 ## Screenshots
 
@@ -30,10 +33,12 @@ Subscribe to get email every day about the package updates (Currently only suppo
 NODE_ENV=
 PORT=
 
+// not necessarily (I just used for Mailtrap in dev mode)
 MAIL_HOST=
 MAIL_PORT=
 MAIL_USER=
 MAIL_PASS=
+// 
 
 REDIS_HOST=
 REDIS_PASSWORD=
@@ -50,7 +55,7 @@ CURL
 
 ```
 curl --request POST \
-  --url http://localhost:8080/api/v1/repo-subscriptions \
+  --url https://outdated-packages.herokuapp.com/api/v1/repo-subscriptions \
   --header 'content-type: application/json' \
   --data '{
 	"url": "https://github.com/axios/axios", 
