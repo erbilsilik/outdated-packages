@@ -25,6 +25,18 @@ Subscribe to get email every day about the package updates (Currently only suppo
 
 `` docker run -p 8080:8080 outdated-packages ``
 
+CURL 
+
+```
+curl --request POST \
+  --url https://outdated-packages.herokuapp.com/api/v1/repo-subscriptions \
+  --header 'content-type: application/json' \
+  --data '{
+	"url": "https://github.com/axios/axios", 
+	"emails": ["your.email@yme.com", "your.email2@me.com"]
+}'
+```
+
 ## Configurations
 
 .env file
@@ -42,18 +54,6 @@ GITHUB_OAUTH_TOKEN=
 SENDGRID_API_KEY=
 SENDGRID_EMAIL=
 SENDGRID_PASSWORD=
-```
-
-CURL 
-
-```
-curl --request POST \
-  --url https://outdated-packages.herokuapp.com/api/v1/repo-subscriptions \
-  --header 'content-type: application/json' \
-  --data '{
-	"url": "https://github.com/axios/axios", 
-	"emails": ["your.email@yme.com", "your.email2@me.com"]
-}'
 ```
 
 
