@@ -34,7 +34,7 @@
     "@sendgrid/mail": "^7.2.1",
     "bull": "^3.15.0",
     "class-transformer": "^0.2.3",
-    "class-validator": "^0.12.2",
+    "class-validator": "^0.14.0",
     "dotenv": "^8.2.0",
     "mongoose": "^5.9.23",
     "nest-emitter": "^1.1.1",
